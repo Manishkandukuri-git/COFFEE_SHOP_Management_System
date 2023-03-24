@@ -1,0 +1,11 @@
+1. Attached Cloud Wallet in Canvas as well as Committed to the Git Repository.
+
+	GIT Repository:https://github.com/Manishkandukuri-git/DMDD_SPRING-2023_COFFEE_SHOP.git
+
+2. Execute CoffeeShopManagementADMIN.sql using the mentioned credentials:
+	USERNAME: ADMIN
+	Password: DmddSpring#2023
+
+2. After Execution, proceed to CoffeeShopManagement_Phase3_Script.sql with the mentioned credentials of user "Harry".
+	USERNAME: Harry
+	Password: CoffeeStaff#123
