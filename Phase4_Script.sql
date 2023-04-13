@@ -88,15 +88,19 @@ DECLARE
 
     v_new_customer_addition_trigger_count number;
     v_new_order_placed_update_inventory_trigger_count number;
+    v_ORDER_CANCELLATION_TRIGGER_count number;
 
 BEGIN
 
-    
+    --ORDER_CANCELLATION_TRIGGER
     SELECT COUNT(*) INTO v_new_order_placed_update_inventory_trigger_count FROM USER_TRIGGERS 
     WHERE TRIGGER_NAME = 'NEW_ORDER_PLACED_UPDATE_INVENTORY_TRIGGER';
     
     SELECT COUNT(*) INTO v_new_customer_addition_trigger_count FROM USER_TRIGGERS 
     WHERE TRIGGER_NAME = 'NEW_CUSTOMER_ADDITION_TRIGGER';
+    
+    SELECT COUNT(*) INTO v_ORDER_CANCELLATION_TRIGGER_count FROM USER_TRIGGERS 
+    WHERE TRIGGER_NAME = 'ORDER_CANCELLATION_TRIGGER';
     
     IF v_new_order_placed_update_inventory_trigger_count>0 
     THEN
@@ -106,6 +110,11 @@ BEGIN
     IF v_new_customer_addition_trigger_count > 0
     THEN
     EXECUTE IMMEDIATE 'DROP TRIGGER NEW_CUSTOMER_ADDITION_TRIGGER';
+    END IF;
+    
+    IF v_ORDER_CANCELLATION_TRIGGER_count > 0
+    THEN
+    EXECUTE IMMEDIATE 'DROP TRIGGER ORDER_CANCELLATION_TRIGGER';
     END IF;
     
     BEGIN
@@ -358,7 +367,7 @@ CREATE TABLE INVENTORY (
     INVENTORY_TYPE VARCHAR2(30) NOT NULL,
     UNIT_OF_MEASUREMENT VARCHAR2(10) NOT NULL,
     coffee_shop_id int references coffee_shop(coffee_shop_id),
-    qyt_supplied decimal(10,2)
+    qty_supplied decimal(10,2)
 
 );
 
@@ -450,7 +459,7 @@ PROCEDURE insert_inventory
            v_inventory_type IN inventory.inventory_type%TYPE,
            v_unit_of_measurement IN inventory.unit_of_measurement%TYPE,
            v_coffee_shop_id IN inventory.coffee_shop_id%TYPE,
-           v_qyt_supplied in inventory.qyt_supplied%TYPE
+           v_qty_supplied in inventory.qty_supplied%TYPE
     );
 
 PROCEDURE insert_menu_item
@@ -580,12 +589,12 @@ PROCEDURE insert_inventory
            v_inventory_type IN inventory.inventory_type%TYPE,
            v_unit_of_measurement IN inventory.unit_of_measurement%TYPE,
            v_coffee_shop_id IN inventory.coffee_shop_id%TYPE,
-           v_qyt_supplied in inventory.qyt_supplied%TYPE
+           v_qty_supplied in inventory.qty_supplied%TYPE
     )
     IS
     BEGIN
-      INSERT INTO inventory(inventory_id, inventory_name, inventory_qty, inventory_status, inventory_type, unit_of_measurement,coffee_shop_id,qyt_supplied) 
-      VALUES (v_inventory_id, v_inventory_name, v_inventory_qty, v_inventory_status, v_inventory_type, v_unit_of_measurement,v_coffee_shop_id,v_qyt_supplied);
+      INSERT INTO inventory(inventory_id, inventory_name, inventory_qty, inventory_status, inventory_type, unit_of_measurement,coffee_shop_id,qty_supplied) 
+      VALUES (v_inventory_id, v_inventory_name, v_inventory_qty, v_inventory_status, v_inventory_type, v_unit_of_measurement,v_coffee_shop_id,v_qty_supplied);
     END;
 
 PROCEDURE insert_menu_item
@@ -780,6 +789,68 @@ CREATE OR REPLACE TRIGGER new_customer_addition_trigger    -- update the item_in
 /
 
 
+CREATE OR REPLACE TRIGGER ORDER_CANCELLATION_TRIGGER    -- update the item_inventory_bridge table when an order is cancelled
+ AFTER UPDATE ON ORDERS 
+ REFERENCING NEW AS new 
+ OLD as old
+ FOR EACH ROW
+ 
+ DECLARE
+ 
+     v_order_id ORDERS.order_id%TYPE;
+     v_order_status ORDERS.order_status%TYPE;
+     v_req_qty ITEM_PREP_REQ.QTY_REQUIRED%TYPE;
+     v_ordered_qty item_order_bridge.QTY_ORDERED%TYPE ;
+     v_item_id item_order_bridge.item_id%TYPE;
+     v_inventory_id ITEM_PREP_REQ.inventory_id%TYPE;
+     v_inventory_qty INVENTORY.inventory_qty%TYPE;
+ 
+ BEGIN
+   DBMS_OUTPUT.PUT_LINE('Trigger begins...');
+   
+   v_order_id := :new.order_id;
+   v_order_status := :old.order_status;
+   
+   DBMS_OUTPUT.PUT_LINE('statement 1 : ' ||v_order_id || ',' || v_order_status);
+   
+   DBMS_OUTPUT.PUT_LINE('statement 2 : ' || v_order_status);
+   
+   DBMS_OUTPUT.PUT_LINE('Statement 3 : ' || v_order_status);
+   
+   FOR q in
+       ( select item_id, QTY_ORDERED  into v_item_id, v_ordered_qty
+        from HARRY.item_order_bridge
+        where order_id = v_order_id)
+        loop
+        
+        DBMS_OUTPUT.PUT_LINE('Statement 4 : ' || q.item_id ||' , ' || q.QTY_ORDERED);
+        
+        FOR i in
+           ( select QTY_REQUIRED,INVENTORY_ID  into v_req_qty, v_inventory_id
+            from HARRY.ITEM_PREP_REQ
+            where item_id = q.item_id)
+            loop
+                
+                DBMS_OUTPUT.PUT_LINE('Statement 5' || i.QTY_REQUIRED ||',' || i.INVENTORY_ID);
+                
+                UPDATE HARRY.inventory SET INVENTORY_QTY = (INVENTORY_QTY + (q.QTY_ORDERED*i.QTY_REQUIRED))
+                WHERE inventory_id = i.INVENTORY_ID;
+                
+                select INVENTORY_QTY into v_inventory_qty from HARRY.inventory where inventory_id = i.INVENTORY_ID;
+                
+                if v_inventory_qty > 0
+                then
+                UPDATE HARRY.inventory SET INVENTORY_STATUS = 'Available'
+                WHERE inventory_id = i.INVENTORY_ID and v_inventory_qty > 0; 
+                end if;
+        
+        end loop;
+        DBMS_OUTPUT.PUT_LINE('Data updated!!');
+    end loop;
+ END;
+/
+
+
 
 --- start inserting data here -----
 /*
@@ -858,7 +929,6 @@ EXEC INSERT_DATA.insert_order_employee(2010, 548, 650);
 
 
 EXEC INSERT_DATA.insert_coffee_shop(coffee_shop_id_sequence.nextval, 6178282828, '120 SouthBay', 'Boston', 'Massachusetts', 02107);
---EXEC INSERT_DATA.insert_coffee_shop(coffee_shop_id_sequence.nextval, 6178282838, '88 North Station', 'Boston', 'Massachusetts', 02121);
 
 EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(customer_id_sequence.nextval, 'Kelly', 'Key', 'BOSTON', 'MASSACHUSETTS', 8678978743, '02-SEP-2022 13:24:00');
 EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(customer_id_sequence.nextval, 'Clark', 'Schroeder', 'CAMBRIDGE', 'MASSACHUSETTS', 8678543563, '01-OCT-2022 11:29:00');
@@ -905,12 +975,6 @@ EXEC INSERT_DATA.insert_inventory(inventory_id_sequence.nextval, 'Distilled Wate
 EXEC INSERT_DATA.insert_inventory(inventory_id_sequence.nextval, 'Chocolate Syrup', 212.00, 'Available', 'Perishable', 'Oz',1,0.00);
 EXEC INSERT_DATA.insert_inventory(inventory_id_sequence.nextval, 'Raspberry Syrup', 52.00, 'Available', 'Perishable', 'Oz',1,0.00);
 
-select * from coffee_shop;
-select * from menu_item;
-select * from inventory;
-select * from customer;
-select * from EMPLOYEE;
-SELECT * FROM ORDERS;
 
 EXEC INSERT_DATA.INSERT_ITEM_PREP_REQ(50001, 2, 10, 0.1, 'Available');
 EXEC INSERT_DATA.INSERT_ITEM_PREP_REQ(50002, 2, 16, 8, 'Available');
@@ -1085,8 +1149,15 @@ SELECT INVENTORY_ID FROM ITEM_PREP_REQ
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+select * from inventory;
+
+update orders set order_status = 'Cancelled' where order_id = '103' and order_status not in ('Delivered', 'Ready for Pickup', 'Cancelled');
+
+select * from inventory;
 
 select * from view_menu_item_to_customer;
+
+------------------------- REPORTS BELOW  -------------------------------
 
 select * from current_inventory_status_VIEW;
 
