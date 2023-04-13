@@ -852,82 +852,6 @@ CREATE OR REPLACE TRIGGER ORDER_CANCELLATION_TRIGGER    -- update the item_inven
 
 
 
---- start inserting data here -----
-/*
-EXEC INSERT_DATA.insert_coffee_shop(2, 6178282828, '120 SouthBay', 'Boston', 'Massachusetts', 02107);
-EXEC INSERT_DATA.insert_coffee_shop(3, 6178282838, '88 North Station', 'Boston', 'Massachusetts', 02121);
-
-EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(188, 'Kelly', 'Key', 'BOSTON', 'MASSACHUSETTS', 8678978743, SYSTIMESTAMP);
-EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(243, 'Clark', 'Schroeder', 'CAMBRIDGE', 'MASSACHUSETTS', 8678543563, SYSTIMESTAMP);
-EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(256, 'Elvis ', 'Cardenas', 'BOSTON', 'MASSACHUSETTS', 8678976098, SYSTIMESTAMP);
-EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(322, 'Rafael ', 'Estes', 'BOSTON', 'MASSACHUSETTS', 8678434563, SYSTIMESTAMP);
-EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(210, 'Colin ', 'Lynn', 'LOWELL', 'MASSACHUSETTS', 8678900063, SYSTIMESTAMP);
-EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(222, 'JACK', 'SPARROW', 'BOSTON', 'MASSACHUSETTS', 8678976563, SYSTIMESTAMP);
-
-EXEC INSERT_DATA.insert_employee(921, 'Sue Tindale', 'Store_Manager', 8578765439, '3 Mass Ave', 'Boston', 'Massachusetts', 02115, 34,2);
-EXEC INSERT_DATA.insert_employee(724, 'Marny Hermione', 'Barista', 6178889345, '75 huntington Ave', 'Boston', 'Massachusetts', 02113, 26,3);
-EXEC INSERT_DATA.insert_employee(650, 'Chelsea Claudia', 'Cashier', 8576633442, '6 Brooks Ave', 'Cambridge', 'Massachusetts', 02111, 20,3);
-EXEC INSERT_DATA.insert_employee(934, 'Kelsey Cameron', 'Inventory_Manager', 8579876543, '43 Alphonsus Street', 'Boston', 'Massachusetts', 02121, 30,2);
-EXEC INSERT_DATA.insert_employee(811, 'Caldwell Veda', 'Order_Delivery_Emp', 6172563748, '369 Hunter Street', 'Boston', 'Massachusetts', 02120, 20,2);
-EXEC INSERT_DATA.insert_employee(744, 'Peter Paloma', 'Barista', 8577755210, '1641 Washington Street', 'Boston', 'Massachusetts', 02118, 24,3);
-
-EXEC INSERT_DATA.insert_menu_item(15, 'Nitro Cold Brew', 'Exotic Cold Brew along with Fresh Almond Milk', 8.95, 2);
-EXEC INSERT_DATA.insert_menu_item(12, 'Pumpkin Spice Latte', 'Latte in Fresh Whole Milk with 3 Pumpkin Spice Pumps', 8.95, 2);
-EXEC INSERT_DATA.insert_menu_item(16, 'Caffé Mocha', 'Simply the Best Mocha ever', 9.45, 2);
-EXEC INSERT_DATA.insert_menu_item(11, 'Caffé Americano', 'If American accent has a taste...', 4.50, 3);
-EXEC INSERT_DATA.insert_menu_item(14, 'Java Chip Frappuccino', 'Freshly made Java Chip Frappuccino', 8.95, 3);
-EXEC INSERT_DATA.insert_menu_item(13, 'Signature Hot Chocolate', 'Hot Chocolate in Winter keeps you warm', 7.95, 2);
-
-EXEC INSERT_DATA.insert_inventory(269, 'Whole Milk', 30.00, 'Available', 'Perishable', 'Gallon',2,0.00);
-EXEC INSERT_DATA.insert_inventory(270, 'Almond Milk', 30.00, 'Available', 'Perishable', 'Gallon',2,0.00);
-EXEC INSERT_DATA.insert_inventory(285, 'Hazelnut Syrup', 20.00, 'Available', 'Perishable', 'Oz',2,0.00);
-EXEC INSERT_DATA.insert_inventory(286, 'Vanilla Syrup', 20.00, 'Available', 'Perishable', 'Oz',2, 0.00);
-EXEC INSERT_DATA.insert_inventory(223, 'Cups', 200.00, 'Available', 'Non-Perishable', 'Pieces',2, 0.00);
-EXEC INSERT_DATA.insert_inventory(224, 'Stirrer', 300.00, 'Available', 'Non-Perishable', 'Pieces',2, 0.00);
-EXEC INSERT_DATA.insert_inventory(287, 'Pumpkin Spice Syrup', 20.00, 'Available', 'Perishable', 'Oz',2, 0.00);
-EXEC INSERT_DATA.insert_inventory(230, 'Espresso Coffee', 20.00, 'Available', 'Perishable', 'Gallon',2, 0.00);
-EXEC INSERT_DATA.insert_inventory(250, 'Chocolate', 20.00, 'Available', 'Perishable', 'Gallon',2, 0.00);
-EXEC INSERT_DATA.insert_inventory(260, 'Sugar', 30.00, 'Available', 'Perishable', 'Gallon',2, 0.00);
-EXEC INSERT_DATA.insert_inventory(240, 'Chocolate Syrup', 10.00, 'Available', 'Perishable', 'Gallon',2, 0.00);
-
-
-EXEC INSERT_DATA.INSERT_ITEM_PREP_REQ(50001, 12, 269, 10, 'Available');
-EXEC INSERT_DATA.INSERT_ITEM_PREP_REQ(50002, 12, 287, 8, 'Available');
-EXEC INSERT_DATA.INSERT_ITEM_PREP_REQ(50000, 12, 230, 20, 'Available');
-EXEC INSERT_DATA.INSERT_ITEM_PREP_REQ(50004, 15, 270, 1, 'Available');
-EXEC INSERT_DATA.INSERT_ITEM_PREP_REQ(50006, 15, 230, 2, 'Available');
-EXEC INSERT_DATA.INSERT_ITEM_PREP_REQ(50009, 15, 286, 8, 'Available');
-
-
-EXEC INSERT_DATA.insert_orders(268, 222, 'IN-STORE', SYSTIMESTAMP,'Ready for Pickup', SYSTIMESTAMP, SYSTIMESTAMP, 9.95,2);
-EXEC INSERT_DATA.insert_orders(876, 188, 'IN-STORE', SYSTIMESTAMP,'In Progress', SYSTIMESTAMP, SYSTIMESTAMP, 19.95,2);
-EXEC INSERT_DATA.insert_orders(234, 243, 'IN-STORE', SYSTIMESTAMP,'Delivered', SYSTIMESTAMP, SYSTIMESTAMP, 7.95,3);
-EXEC INSERT_DATA.insert_orders(123, 256, 'ONLINE', SYSTIMESTAMP,'In Progress', SYSTIMESTAMP, SYSTIMESTAMP, 29.95,2);
-EXEC INSERT_DATA.insert_orders(898, 322, 'ONLINE', SYSTIMESTAMP,'Ready for Pickup', SYSTIMESTAMP, SYSTIMESTAMP, 9.95,3);
-EXEC INSERT_DATA.insert_orders(548, 210, 'IN-STORE', SYSTIMESTAMP,'Ready for Pickup', SYSTIMESTAMP, SYSTIMESTAMP, 10.95,3);
-
-EXEC INSERT_DATA.INSERT_ITEM_ORDER_BRIDGE(1118, 268, 15,  1);
-EXEC INSERT_DATA.INSERT_ITEM_ORDER_BRIDGE(1119, 876, 12,  2);
-EXEC INSERT_DATA.INSERT_ITEM_ORDER_BRIDGE(1112, 234, 15,  1);
-EXEC INSERT_DATA.INSERT_ITEM_ORDER_BRIDGE(1113, 123, 12, 3);
-EXEC INSERT_DATA.INSERT_ITEM_ORDER_BRIDGE(1115, 898, 15,  1);
-EXEC INSERT_DATA.INSERT_ITEM_ORDER_BRIDGE(1111, 548, 12,  1);
-
-EXEC INSERT_DATA.insert_employee_inventory(1001, 934, 269);
-EXEC INSERT_DATA.insert_employee_inventory(1003, 934, 285);
-EXEC INSERT_DATA.insert_employee_inventory(1004, 934, 286);
-EXEC INSERT_DATA.insert_employee_inventory(1005, 934, 224);
-
-EXEC INSERT_DATA.insert_order_employee(2001, 268, 921);
-EXEC INSERT_DATA.insert_order_employee(1001, 876, 744);
-EXEC INSERT_DATA.insert_order_employee(1002, 234, 724);
-EXEC INSERT_DATA.insert_order_employee(2002, 123, 934);
-EXEC INSERT_DATA.insert_order_employee(1011, 898, 811);
-EXEC INSERT_DATA.insert_order_employee(2010, 548, 650);
-
-*/
-
-
 EXEC INSERT_DATA.insert_coffee_shop(coffee_shop_id_sequence.nextval, 6178282828, '120 SouthBay', 'Boston', 'Massachusetts', 02107);
 
 EXEC INSERT_DATA.INSERT_CUSTOMER_PROC(customer_id_sequence.nextval, 'Kelly', 'Key', 'BOSTON', 'MASSACHUSETTS', 8678978743, '02-SEP-2022 13:24:00');
@@ -1148,14 +1072,54 @@ SELECT INVENTORY_ID FROM ITEM_PREP_REQ
 );
 
 
+-------------------- FUNCTIONS to apply discount ----------------------------------------------
+
+CREATE OR REPLACE FUNCTION apply_discount15(p_order_id in orders.order_id%TYPE)
+return number
+as
+  v_total_amount orders.total_amount%TYPE;
+  v_discounted_amount NUMBER;
+BEGIN
+  -- get the total amount of the order
+  SELECT total_amount
+  INTO v_total_amount
+  FROM orders
+  WHERE order_id = p_order_id;
+ DBMS_OUTPUT.PUT_LINE('Order id ' || p_order_id);
+  -- calculate the discounted amount
+  v_discounted_amount := v_total_amount * 0.85;
+ 
+  -- update the order with the discounted amount
+  UPDATE orders
+  SET total_amount = v_discounted_amount
+  WHERE order_id = p_order_id;
+ 
+  -- return the discounted amount
+  RETURN v_discounted_amount;
+END;
+/
+
+DECLARE
+  v_discounted_amount NUMBER;
+BEGIN
+  v_discounted_amount := apply_discount15(108);
+  DBMS_OUTPUT.PUT_LINE('Discounted amount: ' || v_discounted_amount);
+END;
+/
+
+SELECT * FROM orders WHERE order_id = 108 ;
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 select * from inventory;
 
-update orders set order_status = 'Cancelled' where order_id = '103' and order_status not in ('Delivered', 'Ready for Pickup', 'Cancelled');
+update orders set order_status = 'Cancelled' where order_id = '108' and order_status not in ('Delivered', 'Ready for Pickup', 'Cancelled');
 
 select * from inventory;
 
 select * from view_menu_item_to_customer;
+
+select * from orders;
 
 ------------------------- REPORTS BELOW  -------------------------------
 
