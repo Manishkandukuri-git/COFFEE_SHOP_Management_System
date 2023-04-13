@@ -736,14 +736,13 @@ CREATE OR REPLACE TRIGGER new_order_placed_update_inventory_trigger     --- when
         where item_id =: new.item_id
         and INVENTORY_AVAILABILITY = 'Available')
         loop
-        DBMS_OUTPUT.PUT_LINE('QTY_REQUIRED, INVENTORY_ID ' || q.QTY_REQUIRED || ',' || q.INVENTORY_ID );
+        DBMS_OUTPUT.PUT_LINE('QTY_REQUIRED = ' || q.QTY_REQUIRED || ' , ' || ' INVENTORY_ID = ' || q.INVENTORY_ID );
         v_req_qty := q.QTY_REQUIRED;
         v_inventory_id := q.INVENTORY_ID;
         
         select INVENTORY_QTY into v_inventory_qty from inventory where inventory_id = v_inventory_id;
         
-        DBMS_OUTPUT.PUT_LINE('QTY_REQUIRED, INVENTORY_ID ......' || v_req_qty || ',' || v_inventory_id );
-        DBMS_OUTPUT.PUT_LINE('total qty ' || v_ordered_qty*v_req_qty || ',' || v_inventory_qty );
+        DBMS_OUTPUT.PUT_LINE('total qty : ' || v_ordered_qty*v_req_qty || ', Inventory_QTY : ' || v_inventory_qty );
         
         UPDATE HARRY.inventory SET INVENTORY_QTY = (INVENTORY_QTY - (v_ordered_qty*v_req_qty))
         WHERE inventory_id = v_inventory_id;
