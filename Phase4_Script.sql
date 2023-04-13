@@ -727,7 +727,7 @@ CREATE OR REPLACE TRIGGER new_order_placed_update_inventory_trigger     --- when
     v_order_id := :new.order_id;
     v_ordered_qty := :new.QTY_ORDERED;
     DBMS_OUTPUT.PUT_LINE(v_order_id);
-    DBMS_OUTPUT.PUT_LINE('QTY_ORDERED ' || v_ordered_qty || ',' || v_item_id);
+    DBMS_OUTPUT.PUT_LINE('QTY_ORDERED ' || v_ordered_qty || ', item_id = ' || v_item_id);
     
     
     FOR q in
@@ -811,11 +811,8 @@ CREATE OR REPLACE TRIGGER ORDER_CANCELLATION_TRIGGER    -- update the item_inven
    v_order_id := :new.order_id;
    v_order_status := :old.order_status;
    
-   DBMS_OUTPUT.PUT_LINE('statement 1 : ' ||v_order_id || ',' || v_order_status);
+   DBMS_OUTPUT.PUT_LINE('statement 1 : order_id = ' ||v_order_id || ', order_staus = ' || v_order_status);
    
-   DBMS_OUTPUT.PUT_LINE('statement 2 : ' || v_order_status);
-   
-   DBMS_OUTPUT.PUT_LINE('Statement 3 : ' || v_order_status);
    
    FOR q in
        ( select item_id, QTY_ORDERED  into v_item_id, v_ordered_qty
@@ -823,7 +820,7 @@ CREATE OR REPLACE TRIGGER ORDER_CANCELLATION_TRIGGER    -- update the item_inven
         where order_id = v_order_id)
         loop
         
-        DBMS_OUTPUT.PUT_LINE('Statement 4 : ' || q.item_id ||' , ' || q.QTY_ORDERED);
+        DBMS_OUTPUT.PUT_LINE('Statement 2 : item_id = ' || q.item_id ||' , QTY_ORDERED = ' || q.QTY_ORDERED);
         
         FOR i in
            ( select QTY_REQUIRED,INVENTORY_ID  into v_req_qty, v_inventory_id
@@ -831,7 +828,7 @@ CREATE OR REPLACE TRIGGER ORDER_CANCELLATION_TRIGGER    -- update the item_inven
             where item_id = q.item_id)
             loop
                 
-                DBMS_OUTPUT.PUT_LINE('Statement 5' || i.QTY_REQUIRED ||',' || i.INVENTORY_ID);
+                DBMS_OUTPUT.PUT_LINE('Statement 3 : QTY_REQUIRED = ' || i.QTY_REQUIRED ||', INVENTORY_ID = ' || i.INVENTORY_ID);
                 
                 UPDATE HARRY.inventory SET INVENTORY_QTY = (INVENTORY_QTY + (q.QTY_ORDERED*i.QTY_REQUIRED))
                 WHERE inventory_id = i.INVENTORY_ID;
@@ -1124,6 +1121,8 @@ select * from view_menu_item_to_customer;
 select * from orders;
 
 ------------------------- REPORTS BELOW  -------------------------------
+
+
 
 select * from current_inventory_status_VIEW;
 
