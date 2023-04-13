@@ -1113,7 +1113,9 @@ SELECT * FROM orders WHERE order_id = 108 ;
 
 select * from inventory;
 
-update orders set order_status = 'Cancelled' where order_id = '108' and order_status not in ('Delivered', 'Ready for Pickup', 'Cancelled');
+update orders set order_status = 'Cancelled' 
+where order_id = '108' 
+and order_status not in ('Delivered', 'Ready for Pickup', 'Cancelled');
 
 select * from inventory;
 
