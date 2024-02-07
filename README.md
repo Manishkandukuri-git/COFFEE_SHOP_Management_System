@@ -15,6 +15,7 @@ Problem Statement:
   ➢ Attracting and retaining customers
   ➢ Tracking sales and financial performance
   ➢ Managing staff schedules and payroll
+  
 • The owner wants to streamline these operations and find solutions to improve the
 overall performance and profitability of the business.
 
